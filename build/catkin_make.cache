@@ -1,0 +1,2 @@
+beginner_tutorials:foobar:gazebo_ros_demos/custom_plugin_tutorial:gazebo_ros_demos/rrbot_control:gazebo_ros_demos/rrbot_description:gazebo_ros_demos/rrbot_gazebo:robot_setup_tf
+-DCATKIN_DEVEL_PREFIX=/home/swapnil/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/swapnil/catkin_ws/install -G Unix Makefiles
