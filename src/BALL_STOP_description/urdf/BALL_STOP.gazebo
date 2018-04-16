@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<robot name="BALL_STOP" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- ros_control mybot launch file -->
+<include filename="$(find BALL_STOP_control)/launch/BALL_STOP_control.launch" />
+
+<gazebo reference="chassis">
+  <material>Gazebo/Orange</material>
+</gazebo>
+
+<gazebo reference="caster_wheel">
+  <mu1>0.0</mu1>
+  <mu2>0.0</mu2>
+  <material>Gazebo/Red</material>
+</gazebo>
+
+<gazebo>
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+    <robotNamespace>/BALL_STOP</robotNamespace>
+  </plugin>
+</gazebo>
+
+<gazebo>
+  <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+    <alwaysOn>true</alwaysOn>
+    <updateRate>100</updateRate>
+    <leftJoint>left_wheel_hinge</leftJoint>
+    <rightJoint>right_wheel_hinge</rightJoint>
+    <wheelSeparation>${chassisWidth+wheelWidth}</wheelSeparation>
+    <wheelDiameter>${2*wheelRadius}</wheelDiameter>
+    <torque>20</torque>
+    <commandTopic>BALL_STOP/cmd_vel</commandTopic>
+    <odometryTopic>BALL_STOP/odom_diffdrive</odometryTopic>
+    <odometryFrame>odom</odometryFrame>
+    <robotBaseFrame>footprint</robotBaseFrame>
+  </plugin>
+</gazebo>
+
+
+
+
+</robot>
