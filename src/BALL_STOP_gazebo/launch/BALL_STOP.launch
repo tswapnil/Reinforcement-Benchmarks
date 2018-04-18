@@ -14,12 +14,14 @@
 	</include>	
 
 
-
+<!--
 <param name="robot_description" command="$(find xacro)/xacro.py '$(find BALL_STOP_description)/urdf/BALL_STOP.xacro'" />
+-->
 
 <!-- push robot_description to factory and spawn robot in gazebo -->
+<!--
 <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
  args="-urdf -param robot_description -model BALL_STOP" />
-
+-->
 
 </launch>
