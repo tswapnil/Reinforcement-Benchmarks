@@ -33,17 +33,18 @@ def setPoseVel(poseList , _name):
 	
 
 
-def setForce(x,y,z,_name):
-	return [0]
+def setForce(fx,fy,fz,_name, _nameLink, start_time,duration):
+	outStr = check_output(["rosservice","call","/gazebo/apply_body_wrench",'{body_name: "'+str(_name)+'::'+str(_nameLink)+'", reference_frame: "'+str(_name)+'::'+str(_nameLink)+'", wrench: { force: { x: '+str(fx)+', y: '+str(fy)+', z: '+str(fz)+' } }, start_time: '+str(start_time)+', duration: '+str(duration)+' }'])
+	return outStr
 
-def getForce(_name):
-	return [0]
 
 
 # Usage
 print(setPoseVel([0,0,0.5,0,0,0,0,0,0,0,0,0,0], "unit_sphere_0"))
 print(setPoseVel([10,0,0,0,0,0.5,0.5,0,0,0,0,0,0], "Stop Sign_0"))
-print(getPoseVel("unit_sphere_0"))
-print(getPoseVel("Stop Sign_0"))
+print(setForce(5,0,0,"unit_sphere_0","link",0,10))
+for i in range(100):
+	print(getPoseVel("unit_sphere_0"))
+	print(getPoseVel("Stop Sign_0"))
 
 
