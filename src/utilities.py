@@ -42,9 +42,11 @@ def setForce(fx,fy,fz,_name, _nameLink, start_time,duration):
 # Usage
 print(setPoseVel([0,0,0.5,0,0,0,0,0,0,0,0,0,0], "unit_sphere_0"))
 print(setPoseVel([10,0,0,0,0,0.5,0.5,0,0,0,0,0,0], "Stop Sign_0"))
-print(setForce(5,0,0,"unit_sphere_0","link",0,10))
+print(setForce(5,0,0,"unit_sphere_0","link",0,-1))
 for i in range(100):
 	print(getPoseVel("unit_sphere_0"))
 	print(getPoseVel("Stop Sign_0"))
+	setPoseVel([0,0,0.5,0,0,0,0,0,0,0,0,0,0], "unit_sphere_0")
+	setPoseVel([10,0,0,0,0,0.5,0.5,0,0,0,0,0,0], "Stop Sign_0")
 
 
