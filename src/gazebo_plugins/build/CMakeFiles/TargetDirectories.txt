@@ -1,0 +1,4 @@
+/home/swapnil/catkin_ws/src/gazebo_plugins/build/CMakeFiles/rebuild_cache.dir
+/home/swapnil/catkin_ws/src/gazebo_plugins/build/CMakeFiles/edit_cache.dir
+/home/swapnil/catkin_ws/src/gazebo_plugins/build/CMakeFiles/model_push.dir
+/home/swapnil/catkin_ws/src/gazebo_plugins/build/CMakeFiles/hello_world.dir
