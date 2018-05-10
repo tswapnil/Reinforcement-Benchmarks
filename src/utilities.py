@@ -1,5 +1,7 @@
 from subprocess import check_output
+import time
 
+ovStart = time.time();
 def getPoseVel(_name):
 	outputStr = check_output(["rosservice", "call", "gazebo/get_model_state", '{model_name: '+ _name +'}'])
 	return parsePoseVel(outputStr)
@@ -40,13 +42,34 @@ def setForce(fx,fy,fz,_name, _nameLink, start_time,duration):
 
 
 # Usage
-print(setPoseVel([0,0,0.5,0,0,0,0,0,0,0,0,0,0], "unit_sphere_0"))
-print(setPoseVel([10,0,0,0,0,0.5,0.5,0,0,0,0,0,0], "Stop Sign_0"))
-print(setForce(5,0,0,"unit_sphere_0","link",0,-1))
-for i in range(100):
-	print(getPoseVel("unit_sphere_0"))
-	print(getPoseVel("Stop Sign_0"))
-	setPoseVel([0,0,0.5,0,0,0,0,0,0,0,0,0,0], "unit_sphere_0")
-	setPoseVel([10,0,0,0,0,0.5,0.5,0,0,0,0,0,0], "Stop Sign_0")
 
+start = time.time()
+print("Start time is " + str(start))
+setPoseVel([0,0,0.5,0,0,0,0,0,0,0,0,0,0], "unit_sphere_0")
+endos = time.time()
+print("End time is " + str(endos))
+print("SetPoseVel took "+str(endos - start))
 
+start = time.time()
+print("Start time is " + str(start))
+getPoseVel("unit_sphere_0")
+endos = time.time()
+print("End time is " + str(endos))
+print("GetPoseVel took "+str(endos - start))
+
+start = time.time()
+print("Start time is " + str(start))
+setForce(0,0,0,"unit_sphere_0","link",0,-1)
+endos = time.time() 
+print("End time is " + str(endos))
+print("setForce took "+str(endos - start))
+
+#print("The entire program took " + str(time.clock() - ovStart) + " seconds")
+
+#print(setPoseVel([10,0,0,0,0,0.5,0.5,0,0,0,0,0,0], "Stop Sign_0"))
+#print(setForce(5,0,0,"unit_sphere_0","link",0,-1))
+#for i in range(100):
+#	print(getPoseVel("unit_sphere_0"))
+#	print(getPoseVel("Stop Sign_0"))
+#	setPoseVel([0,0,0.5,0,0,0,0,0,0,0,0,0,0], "unit_sphere_0")
+#	setPoseVel([10,0,0,0,0,0.5,0.5,0,0,0,0,0,0], "Stop Sign_0")

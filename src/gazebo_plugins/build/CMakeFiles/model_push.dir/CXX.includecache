@@ -17,6 +17,10 @@ gazebo/common/common.hh
 -
 gazebo/math/gzmath.hh
 -
+chrono
+-
+thread
+-
 
 /usr/include/gazebo-7/gazebo/Master.hh
 string
