@@ -40,8 +40,8 @@ namespace gazebo
       this->model = _parent;
       link_x = 0;
       lin_0_y = -8.0;
-      lin_1_y = -1.0;
-      lin_2_y = 4.0;
+      lin_1_y = 0.0;
+      lin_2_y = 5.0;
       reset();
       //cout << (this->model->GetLink("link")->GetWorldPose());
       // Listen to the update event. This event is broadcast every
@@ -58,6 +58,10 @@ namespace gazebo
       //std::cout << "Link 0 is at " << lin_0_y << "\n";
       //std::cout << "Link 1 is at " << lin_1_y << "\n";
       //std::cout << "Link 2 is at " << lin_2_y << "\n";
+    }
+
+    public : bool didCollide(){
+       return link_x == 8.0;
     }
     // Called by the world update start event
     public: void OnUpdate()
