@@ -73,12 +73,12 @@ namespace gazebo
       //if(link_x>10) {link_x = 0.0;}
       lin_0_y++;
       if(lin_0_y > 8) { lin_0_y = -8.0;}
-      lin_1_y+=2;
+      lin_1_y+=1;
       if(lin_1_y > 8) { lin_1_y = -8.0;}
       lin_2_y++;
       if(lin_2_y > 8) { lin_2_y = -8.0;}
       update();
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+      std::this_thread::sleep_for(std::chrono::milliseconds(800));
       // Apply a small linear velocity to the model.
       //this->model->SetLinearVel(ignition::math::Vector3d(1, 0, 0));
       //  this->model->GetLink("box_link")->AddForce(math::Vector3(10,0,12));
