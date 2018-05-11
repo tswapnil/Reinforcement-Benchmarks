@@ -73,7 +73,7 @@ namespace gazebo
       //if(link_x>10) {link_x = 0.0;}
       lin_0_y++;
       if(lin_0_y > 8) { lin_0_y = -8.0;}
-      lin_1_y+=1;
+      lin_1_y+=2;
       if(lin_1_y > 8) { lin_1_y = -8.0;}
       lin_2_y++;
       if(lin_2_y > 8) { lin_2_y = -8.0;}

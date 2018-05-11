@@ -66,6 +66,7 @@ namespace gazebo
     private : double reward;
     private : StateAction current;
     private : StateAction prev;
+    private : bool collided;
    
     public: void setBallPose(){
         math::Pose temp = this->model->GetLink("link")->GetWorldPose();
@@ -95,6 +96,7 @@ namespace gazebo
       eps = 0.3;
       totalReward = 0;
       reward = 0;
+      collided = false;
    
       current.ball_x = link_x;
       current.ob_a_y = lin_0_y;
@@ -190,14 +192,16 @@ namespace gazebo
          //epsiode over
          totalReward = 0;
          reward = 0;
+         collided = false;
       }
       if(didCollide()){
        //high negative reward
           reward = -1000;
+          collided = true;
       }
       else{
         // Zero reward or positive reward
-          if(link_x == 10){
+          if(link_x == 10 && !collided){
          //+
              reward = 1000;
             }
