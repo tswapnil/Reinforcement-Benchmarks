@@ -56,17 +56,6 @@ CMAKE_BINARY_DIR = /home/swapnil/catkin_ws/src/gazebo_plugins/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -77,6 +66,17 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -111,19 +111,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named model_push
-
-# Build rule for target.
-model_push: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 model_push
-.PHONY : model_push
-
-# fast build rule for target.
-model_push/fast:
-	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/build
-.PHONY : model_push/fast
-
-#=============================================================================
 # Target rules for targets named hello_world
 
 # Build rule for target.
@@ -135,6 +122,32 @@ hello_world: cmake_check_build_system
 hello_world/fast:
 	$(MAKE) -f CMakeFiles/hello_world.dir/build.make CMakeFiles/hello_world.dir/build
 .PHONY : hello_world/fast
+
+#=============================================================================
+# Target rules for targets named qlearn
+
+# Build rule for target.
+qlearn: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 qlearn
+.PHONY : qlearn
+
+# fast build rule for target.
+qlearn/fast:
+	$(MAKE) -f CMakeFiles/qlearn.dir/build.make CMakeFiles/qlearn.dir/build
+.PHONY : qlearn/fast
+
+#=============================================================================
+# Target rules for targets named model_push
+
+# Build rule for target.
+model_push: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 model_push
+.PHONY : model_push
+
+# fast build rule for target.
+model_push/fast:
+	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/build
+.PHONY : model_push/fast
 
 hello_world.o: hello_world.cc.o
 
@@ -190,22 +203,53 @@ model_push.cc.s:
 	$(MAKE) -f CMakeFiles/model_push.dir/build.make CMakeFiles/model_push.dir/model_push.cc.s
 .PHONY : model_push.cc.s
 
+qlearn.o: qlearn.cc.o
+
+.PHONY : qlearn.o
+
+# target to build an object file
+qlearn.cc.o:
+	$(MAKE) -f CMakeFiles/qlearn.dir/build.make CMakeFiles/qlearn.dir/qlearn.cc.o
+.PHONY : qlearn.cc.o
+
+qlearn.i: qlearn.cc.i
+
+.PHONY : qlearn.i
+
+# target to preprocess a source file
+qlearn.cc.i:
+	$(MAKE) -f CMakeFiles/qlearn.dir/build.make CMakeFiles/qlearn.dir/qlearn.cc.i
+.PHONY : qlearn.cc.i
+
+qlearn.s: qlearn.cc.s
+
+.PHONY : qlearn.s
+
+# target to generate assembly for a file
+qlearn.cc.s:
+	$(MAKE) -f CMakeFiles/qlearn.dir/build.make CMakeFiles/qlearn.dir/qlearn.cc.s
+.PHONY : qlearn.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... model_push"
 	@echo "... hello_world"
+	@echo "... qlearn"
+	@echo "... model_push"
+	@echo "... rebuild_cache"
 	@echo "... hello_world.o"
 	@echo "... hello_world.i"
 	@echo "... hello_world.s"
 	@echo "... model_push.o"
 	@echo "... model_push.i"
 	@echo "... model_push.s"
+	@echo "... qlearn.o"
+	@echo "... qlearn.i"
+	@echo "... qlearn.s"
 .PHONY : help
 
 

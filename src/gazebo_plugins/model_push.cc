@@ -15,6 +15,7 @@ namespace gazebo
     private : double lin_0_y;
     private : double lin_1_y;
     private : double lin_2_y;
+    private : double lin_f_x;
 
     public: void reset(){
 
@@ -31,8 +32,9 @@ namespace gazebo
     public: void setLinkPos(double x){
         this->model->GetLink("link")->SetWorldPose(math::Pose(math::Vector3(x,0.0,0.5),math::Quaternion(0.0,0.0,0.0)), true,true);
     }
+    
     public : void setLinkWithNum(int type, double y){
-     this->model->GetLink("link_"+std::to_string(type))->SetWorldPose(math::Pose(math::Vector3(8.0,y,0.5),math::Quaternion(0.0,0.0,0.0)), true,true);
+     this->model->GetLink("link_"+std::to_string(type))->SetWorldPose(math::Pose(math::Vector3(lin_f_x,y,0.5),math::Quaternion(0.0,0.0,0.0)), true,true);
     }
     public: void Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/)
     {
@@ -42,6 +44,7 @@ namespace gazebo
       lin_0_y = -8.0;
       lin_1_y = 0.0;
       lin_2_y = 5.0;
+      lin_f_x = 9.0;
       reset();
       //cout << (this->model->GetLink("link")->GetWorldPose());
       // Listen to the update event. This event is broadcast every
@@ -51,7 +54,7 @@ namespace gazebo
     }
 
     public: void update(){
-      setLinkPos(link_x);
+      //setLinkPos(link_x);
       setLinkWithNum(0,lin_0_y);
       setLinkWithNum(1,lin_1_y);
       setLinkWithNum(2,lin_2_y);
@@ -61,16 +64,16 @@ namespace gazebo
     }
 
     public : bool didCollide(){
-       return link_x == 8.0;
+       return (link_x == lin_f_x) && (lin_0_y == 0 || lin_1_y == 0 || lin_2_y == 0);
     }
     // Called by the world update start event
     public: void OnUpdate()
     {
-      link_x++;
-      if(link_x>10) {link_x = 0.0;}
+      //link_x++;
+      //if(link_x>10) {link_x = 0.0;}
       lin_0_y++;
       if(lin_0_y > 8) { lin_0_y = -8.0;}
-      lin_1_y++;
+      lin_1_y+=1;
       if(lin_1_y > 8) { lin_1_y = -8.0;}
       lin_2_y++;
       if(lin_2_y > 8) { lin_2_y = -8.0;}
