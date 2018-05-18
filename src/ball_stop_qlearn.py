@@ -32,16 +32,17 @@ class StateAction:
 
 
 bx = 0.0
-y1 = 0.0
+y1 = -8.0
 y2 = 0.0
-y3 = 0.0
+y3 = 8.0
 num_episodes = 0
 eps = 0.3
 current = State(bx,y1,y2,y3)
-previous = State(0.0,0.0,0.0,0.0)
+previous = State(0.0,8.0,0.0,-8.0)
 qStates = dict()
 curReward = 0.0
 prevReward = 0.0
+episodes = [100, 500, 1000] #5000, 8000, 10000, 50000, 100000, 1000000]
 
 def setLocalVars():
     global bx,y1,y2,y3, current, previous
@@ -58,14 +59,49 @@ def sendBallPose():
     obj = LinkState('link',p,t,'world') 
     setLinkState(obj)
 
+def sendObsPose():
+    global y1,y2,y3
+    p_0 = Pose(Point(9.0,y1,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    t_0 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
+    obj_0 = LinkState('link_0',p_0,t_0,'world') 
+    setLinkState(obj_0)
+    p_1 = Pose(Point(9.0,y2,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    t_1 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
+    obj_1 = LinkState('link_1',p_1,t_1,'world') 
+    setLinkState(obj_1)
+    p_2 = Pose(Point(9.0,y3,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    t_2 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
+    obj_2 = LinkState('link_2',p_2,t_2,'world') 
+    setLinkState(obj_2)
+
+    
 def incrementBallState():
-    global bx, num_episodes
+    global bx, num_episodes, episodes
     if bx == 9.0:
         bx = 0.0
         num_episodes += 1
+        if num_episodes in episodes:
+            print(str(num_episodes) + " completed")
+            pickleQStates(num_episodes)
     else :
         bx += 1
     sendBallPose()
+
+def incrementObState():
+    global bx, y1, y2, y3
+    if y1 >= 8.0:
+        y1 = -8.0
+    else :
+        y1+=1   
+    if y2 >= 8.0:
+        y2 = -8.0
+    else :
+        y2+=1 
+    if y3 >= 8.0:
+        y3 = -8.0
+    else :
+        y3+=1 
+    sendObsPose()
 
 
 def didCollide():
@@ -132,6 +168,7 @@ def act(action, prev):
 def qLearnUpdate(action, reward, alpha, gamma):
     global qStates, previous, current
     addQValue(current)
+    addQValue(previous)
     qStates[previous][action] += alpha*(reward + gamma*(maxStateAction(current)[1]) - qStates[previous][action] )
     
 def pickleQStates(num):
@@ -140,7 +177,7 @@ def pickleQStates(num):
     pickle.dump(qStates,output)
     output.close()
 
-episodes = [100, 500, 1000, 5000]#, 8000, 10000, 50000, 100000, 1000000]
+
 while not rospy.is_shutdown():
     try:
         setLocalVars()
@@ -149,12 +186,11 @@ while not rospy.is_shutdown():
         curReward = act(action,prevReward)
         prevReward = curReward
         qLearnUpdate(action,curReward, 0.1, 0.4)
+        incrementObState()
         #print(str(num_episodes) + " completed")
-        if num_episodes > 1000000 :
+        if num_episodes > 1000 :
             break
-        if num_episodes in episodes:
-            print(str(num_episodes) + " completed")
-            pickleQStates(num_episodes)         
+                 
     except rospy.ServiceException as e:
         print e
         break

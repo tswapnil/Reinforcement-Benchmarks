@@ -135,6 +135,7 @@ while not rospy.is_shutdown():
         setLocalVars()
         addQValue(current)
         action = pickMaxAction()
+        print(action)
         curReward = act(action,prevReward)
         prevReward = curReward
         if num_episodes == 100:
