@@ -32,18 +32,18 @@ class StateAction:
 
 
 bx = 0.0
-y1 = 0.0
+y1 = -8.0
 y2 = 0.0
-y3 = 0.0
+y3 = 8.0
 num_episodes = 0
 num_collisions = 0
 eps = 0.3
 current = State(bx,y1,y2,y3)
-previous = State(0.0,0.0,0.0,0.0)
+previous = State(0.0,8.0,0.0,-8.0)
 curReward = 0.0
 prevReward = 0.0
 
-pkl_file = open('data_100.pkl', 'rb')
+pkl_file = open('data_1000.pkl', 'rb')
 qStates = pickle.load(pkl_file)
 pkl_file.close()
 
@@ -62,6 +62,21 @@ def sendBallPose():
     obj = LinkState('link',p,t,'world') 
     setLinkState(obj)
 
+def sendObsPose():
+    global y1,y2,y3
+    p_0 = Pose(Point(9.0,y1,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    t_0 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
+    obj_0 = LinkState('link_0',p_0,t_0,'world') 
+    setLinkState(obj_0)
+    p_1 = Pose(Point(9.0,y2,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    t_1 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
+    obj_1 = LinkState('link_1',p_1,t_1,'world') 
+    setLinkState(obj_1)
+    p_2 = Pose(Point(9.0,y3,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    t_2 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
+    obj_2 = LinkState('link_2',p_2,t_2,'world') 
+    setLinkState(obj_2)
+
 def incrementBallState():
     global bx, num_episodes
     if bx == 9.0:
@@ -71,6 +86,21 @@ def incrementBallState():
         bx += 1
     sendBallPose()
 
+def incrementObState():
+    global bx, y1, y2, y3
+    if y1 >= 8.0:
+        y1 = -8.0
+    else :
+        y1+=1   
+    if y2 >= 8.0:
+        y2 = -8.0
+    else :
+        y2+=1 
+    if y3 >= 8.0:
+        y3 = -8.0
+    else :
+        y3+=1 
+    sendObsPose()
 
 def didCollide():
     global bx,y1,y2,y3
@@ -108,9 +138,12 @@ def addQValue(state):
 def maxStateAction(state):
     global qStates
     addQValue(state)
+    print("Action : True has value " + str(qStates[state][True]) + "Action : False has " + str(qStates[state][False]))
     if qStates[state][True] > qStates[state][False]:
+        print("Chose True")
         return (True,qStates[state][True])
     else:
+        print("Chose False")
         return (False,qStates[state][False])
 
 def act(action, prev):
@@ -129,15 +162,16 @@ def act(action, prev):
     else:
         return prev    
 
-episodes = [100, 500, 1000, 5000]#, 8000, 10000, 50000, 100000, 1000000]
+
 while not rospy.is_shutdown():
     try:
         setLocalVars()
         addQValue(current)
         action = pickMaxAction()
-        print(action)
+        #print(action)
         curReward = act(action,prevReward)
         prevReward = curReward
+        incrementObState()
         if num_episodes == 100:
             print("Number of Collisions " + str(num_collsions))
             break
