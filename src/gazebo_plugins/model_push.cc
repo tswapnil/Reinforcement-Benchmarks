@@ -78,7 +78,7 @@ namespace gazebo
       lin_2_y++;
       if(lin_2_y > 8) { lin_2_y = -8.0;}
       update();
-      std::this_thread::sleep_for(std::chrono::milliseconds(800));
+     // std::this_thread::sleep_for(std::chrono::milliseconds(800));
       // Apply a small linear velocity to the model.
       //this->model->SetLinearVel(ignition::math::Vector3d(1, 0, 0));
       //  this->model->GetLink("box_link")->AddForce(math::Vector3(10,0,12));

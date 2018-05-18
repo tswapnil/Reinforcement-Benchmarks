@@ -502,7 +502,7 @@
       <pose frame=''>0 0 0.5 0 -0 0</pose>
 
           <plugin name="model_push" filename="libmodel_push.so"/>
-          <plugin name="qlearn" filename="libqlearn.so"/>    
+          <!--plugin name="qlearn" filename="libqlearn.so"/-->    
 
     </model>
   </world>
