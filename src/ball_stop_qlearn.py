@@ -49,7 +49,7 @@ previous = State(0.0,8.0,0.0,-8.0)
 qStates = dict()
 curReward = 0.0
 prevReward = 0.0
-episodes = [100,200,300, 400, 500, 600, 700, 800, 900, 1000, 5000, 10000] #5000, 8000, 10000, 50000, 100000, 1000000]
+episodes = [2000, 3500, 5000, 7500, 10000, 15000, 20000, 50000, 100000] #5000, 8000, 10000, 50000, 100000, 1000000]
 
 
     
@@ -208,7 +208,7 @@ while not rospy.is_shutdown():
         #rospy.sleep(1);
         
         #print(str(num_episodes) + " completed")
-        if num_episodes > 10000 :
+        if num_episodes > max(episodes) :
             break
                  
     except rospy.ServiceException as e:
