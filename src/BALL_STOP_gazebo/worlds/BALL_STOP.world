@@ -98,7 +98,7 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='link_2'>
-          <pose frame=''>8 3.46429 0.5 0 -0 0</pose>
+          <pose frame=''>8 3 0.5 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -405,7 +405,7 @@
         <gravity>1</gravity>
       </link>
       <link name='link_2'>
-        <pose frame=''>8 3.46429 0 0 -0 0</pose>
+        <pose frame=''>8 3 0 0 -0 0</pose>
         <inertial>
           <mass>1</mass>
           <inertia>

@@ -30,29 +30,30 @@ class StateAction:
     def __eq__(self, other):
         return (self.state,self.action) == (other.state, other.action)
 
+def setLocalVars():
+    global bx,y1,y2,y3, current, previous
+    bx = round(getLinkState("link",'world').link_state.pose.position.x)
+    y1 = round(getLinkState("link_0",'world').link_state.pose.position.y)
+    y2 = round(getLinkState("link_1",'world').link_state.pose.position.y)
+    y3 = round(getLinkState("link_2",'world').link_state.pose.position.y)
 
 bx = 0.0
-y1 = -8.0
+y1 = -3.0
 y2 = 0.0
-y3 = 8.0
+y3 = 3.0
+setLocalVars()
 num_episodes = 0
-num_collisions = 0
 eps = 0.3
 current = State(bx,y1,y2,y3)
 previous = State(0.0,8.0,0.0,-8.0)
 curReward = 0.0
 prevReward = 0.0
+episodes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000] #5000, 8000, 10000, 50000, 100000, 1000000]
+num_collisions = 0
 
-pkl_file = open('data_1000.pkl', 'rb')
+pkl_file = open('noStay_500.pkl', 'rb')
 qStates = pickle.load(pkl_file)
 pkl_file.close()
-
-def setLocalVars():
-    global bx,y1,y2,y3, current, previous
-    bx = getLinkState("link",'world').link_state.pose.position.x
-    y1 = getLinkState("link_0",'world').link_state.pose.position.y
-    y2 = getLinkState("link_1",'world').link_state.pose.position.y
-    y3 = getLinkState("link_2",'world').link_state.pose.position.y
     
     
 def sendBallPose():
@@ -64,24 +65,26 @@ def sendBallPose():
 
 def sendObsPose():
     global y1,y2,y3
-    p_0 = Pose(Point(9.0,y1,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    p_0 = Pose(Point(8.0,y1,0.0), Quaternion(0.0,0.0,0.0,0.0))
     t_0 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
     obj_0 = LinkState('link_0',p_0,t_0,'world') 
     setLinkState(obj_0)
-    p_1 = Pose(Point(9.0,y2,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    p_1 = Pose(Point(8.0,y2,0.0), Quaternion(0.0,0.0,0.0,0.0))
     t_1 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
     obj_1 = LinkState('link_1',p_1,t_1,'world') 
     setLinkState(obj_1)
-    p_2 = Pose(Point(9.0,y3,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    p_2 = Pose(Point(8.0,y3,0.0), Quaternion(0.0,0.0,0.0,0.0))
     t_2 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
     obj_2 = LinkState('link_2',p_2,t_2,'world') 
     setLinkState(obj_2)
 
 def incrementBallState():
-    global bx, num_episodes
-    if bx == 9.0:
+    global bx, num_episodes, episodes,num_collisions
+    if bx == 8.0:
         bx = 0.0
         num_episodes += 1
+        if num_episodes in episodes:
+            print("Number of Collisions " + str(num_collisions) + " after episode "+ str(num_episodes))
     else :
         bx += 1
     sendBallPose()
@@ -103,15 +106,18 @@ def incrementObState():
     sendObsPose()
 
 def didCollide():
-    global bx,y1,y2,y3
-    if ((bx,0.0) == (9.0,y1)) or ((bx,0.0) == (9.0,y2)) or ((bx,0.0) == (9.0,y3)):
+    global bx,y1,y2,y3, num_collisions
+    if (bx == 8.0) and (y1 == 0.0 or y2 == 0.0 or y3 == 0.0):
+        #print("Collision .... Ah ")
+        num_collisions += 1
         return True
     else :
         return False
 
 def didReachGoal():
     global bx,y1,y2,y3
-    if (bx == 9.0) and (y1!=0) and (y2!=0) and (y3!=0):
+    if (bx == 8.0) and (y1!=0.0) and (y2!=0.0) and (y3!=0.0):
+        #print("Hurray .. Goal Reached")
         return True
     else :
         return False
@@ -124,56 +130,54 @@ def pickMaxAction():
 
 def addQValue(state):
     global qStates
-    import random
-    if (state not in qStates) and (state.x != 9) :
-        qStates[state] = dict()
-        qStates[state][True] = random.randint(-100,100)
-        qStates[state][False] = random.randint(-100,100)
-    if (state not in qStates) and (state.x == 9.0):
-        qStates[state] = dict()    
-        qStates[state][True]=0.0
-        qStates[state][False] = 0.0
-        
+    if state in qStates:
+        return
+    else :
+        print("State Not seen " + str(state.x) +" " +str(state.y1) +" " +str(state.y2) + " " + str(state.y3))     
 
 def maxStateAction(state):
     global qStates
     addQValue(state)
-    print("Action : True has value " + str(qStates[state][True]) + "Action : False has " + str(qStates[state][False]))
+    #print("Action : True has value " + str(qStates[state][True]) + "Action : False has " + str(qStates[state][False]))
     if qStates[state][True] > qStates[state][False]:
-        print("Chose True")
+        #print("Chose True")
         return (True,qStates[state][True])
     else:
-        print("Chose False")
+        #print("Chose False")
         return (False,qStates[state][False])
 
 def act(action, prev):
-    global current, previous, bx, y1, y2, y3, num_collsions
+    global current, previous, bx, y1, y2, y3
     if action:
         incrementBallState()
         previous = current
         current = State(bx,y1,y2,y3)
         if didCollide():
-            num_collsions += 1
             return -100.0
         elif didReachGoal() :
-            return 100.0
+            return 10000.0
         else :
             return 0.0
     else:
-        return prev    
+        if didCollide():
+            incrementBallState()
+            return -100.0
+        elif didReachGoal():
+            incrementBallState()
+            return 10000
+        else:
+            return 2000*(bx - 9)    
 
 
 while not rospy.is_shutdown():
     try:
-        setLocalVars()
         addQValue(current)
         action = pickMaxAction()
         #print(action)
         curReward = act(action,prevReward)
         prevReward = curReward
         incrementObState()
-        if num_episodes == 100:
-            print("Number of Collisions " + str(num_collsions))
+        if num_episodes >= max(episodes):
             break
     except rospy.ServiceException as e:
         print e
