@@ -51,7 +51,7 @@ prevReward = 0.0
 episodes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000] #5000, 8000, 10000, 50000, 100000, 1000000]
 num_collisions = 0
 
-pkl_file = open('noStay_50000.pkl', 'rb')
+pkl_file = open('normal_1000.pkl', 'rb')
 qStates = pickle.load(pkl_file)
 pkl_file.close()
     
@@ -106,7 +106,11 @@ def incrementObState():
     sendObsPose()
 
 def didCollide():
-    global bx,y1,y2,y3, num_collisions
+    global current
+    bx = current.x
+    y1 = current.y1
+    y2 = current.y2
+    y3 = current.y3
     if (bx == 8.0) and (y1 == 0.0 or y2 == 0.0 or y3 == 0.0):
         #print("Collision .... Ah ")
         num_collisions += 1
@@ -115,7 +119,11 @@ def didCollide():
         return False
 
 def didReachGoal():
-    global bx,y1,y2,y3
+    global current
+    bx = current.x
+    y1 = current.y1
+    y2 = current.y2
+    y3 = current.y3
     if (bx == 8.0) and (y1!=0.0) and (y2!=0.0) and (y3!=0.0):
         #print("Hurray .. Goal Reached")
         return True
@@ -148,26 +156,28 @@ def maxStateAction(state):
 
 def act(action, prev):
     global current, previous, bx, y1, y2, y3
+    incrementObState()
+    rew = 0.0
     if action:
         incrementBallState()
-        previous = current
-        current = State(bx,y1,y2,y3)
         if didCollide():
-            return -100.0
+            rew = -10000.0
         elif didReachGoal() :
-            return 10000.0
+            rew = 100.0
         else :
-            return 0.0
+            rew = 0.0
     else:
         if didCollide():
-            incrementBallState()
-            return -100.0
+            #incrementBallState()
+            rew = -10000.0
         elif didReachGoal():
-            incrementBallState()
-            return 10000
+            #incrementBallState()
+            rew = 100.0
         else:
-            return 2000*(bx - 9)    
-
+            rew = 0.0 
+    previous = current
+    current = State(bx,y1,y2,y3)   
+    return rew
 
 while not rospy.is_shutdown():
     try:
@@ -176,11 +186,10 @@ while not rospy.is_shutdown():
         #print(action)
         curReward = act(action,prevReward)
         prevReward = curReward
-        incrementObState()
         if num_episodes >= max(episodes):
             break
     except rospy.ServiceException as e:
         print e
         break
-    #rospy.sleep(1)
+    rospy.sleep(1)
 

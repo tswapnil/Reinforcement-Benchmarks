@@ -50,7 +50,7 @@ qStates = dict()
 curReward = 0.0
 prevReward = 0.0
 episodes = [2000, 3500, 5000, 7500, 10000, 15000, 20000, 50000, 100000] #5000, 8000, 10000, 50000, 100000, 1000000]
-
+#episodes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
     
     
@@ -107,7 +107,11 @@ def incrementObState():
 
 
 def didCollide():
-    global bx,y1,y2,y3
+    global current
+    bx = current.x
+    y1 = current.y1
+    y2 = current.y2
+    y3 = current.y3
     if (bx == 8.0) and (y1 == 0.0 or y2 == 0.0 or y3 == 0.0):
         #print("Collision .... Ah ")
         return True
@@ -115,7 +119,11 @@ def didCollide():
         return False
 
 def didReachGoal():
-    global bx,y1,y2,y3
+    global current
+    bx = current.x
+    y1 = current.y1
+    y2 = current.y2
+    y3 = current.y3
     if (bx == 8.0) and (y1!=0.0) and (y2!=0.0) and (y3!=0.0):
         #print("Hurray .. Goal Reached")
         return True
@@ -158,25 +166,28 @@ def maxStateAction(state):
 
 def act(action, prev):
     global current, previous, bx, y1, y2, y3
+    incrementObState()
+    rew = 0.0
     if action:
         incrementBallState()
-        previous = current
-        current = State(bx,y1,y2,y3)
         if didCollide():
-            return -100.0
+            rew = -10000.0
         elif didReachGoal() :
-            return 10000.0
+            rew = 100.0
         else :
-            return 0.0
+            rew = 0.0
     else:
         if didCollide():
-            incrementBallState()
-            return -100.0
+            #incrementBallState()
+            rew = -10000.0
         elif didReachGoal():
-            incrementBallState()
-            return 10000
+            #incrementBallState()
+            rew = 100.0
         else:
-            return 2000*(bx - 9)    
+            rew = 0.0 
+    previous = current
+    current = State(bx,y1,y2,y3)   
+    return rew
 
 def qLearnUpdate(action, reward, alpha, gamma):
     global qStates, previous, current
@@ -186,7 +197,7 @@ def qLearnUpdate(action, reward, alpha, gamma):
     
 def pickleQStates(num):
     global qStates
-    output = open('noStay_'+str(num)+'.pkl', 'wb')
+    output = open('normal_'+str(num)+'.pkl', 'wb')
     pickle.dump(qStates,output)
     output.close()
 
@@ -201,7 +212,6 @@ while not rospy.is_shutdown():
         prevReward = curReward
         qLearnUpdate(action,curReward, 0.1,1)
         #if iterations%2 == 0:
-        incrementObState()
         #print("Iteration "+str(iterations))
         #print(action)
         #print(str(bx) + " " + str(y1) + " " + str(y2) + " " + str(y3))
