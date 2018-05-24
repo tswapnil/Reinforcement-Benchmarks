@@ -3,6 +3,8 @@
 . ~/catkin_ws/devel/setup.bash
 roslaunch BALL_STOP_gazebo BALL_STOP.launch
 
+roslaunch BALL_STOP_PLEX_gazebo BALL_STOP_PLEX.launch
+
 rostopic echo -n 1 /gazebo/model_states
 
 rostopic pub -l /gazebo/set_model_state gazebo_msgs/ModelState '{model_name: unit_sphere_0, pose: { position: { x: 0, y: 0, z: 0.5 }, orientation: {x: 0, y: 0, z: 0, w: 0 } }, twist: { linear: { x: 0, y: 0, z: 0 }, angular: { x: 0, y: 0, z: 0}  }, reference_frame: world }'
