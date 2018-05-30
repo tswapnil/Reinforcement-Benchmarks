@@ -126,7 +126,25 @@
       </camera>
     </gui>
     <model name='ballOfDoom_0'>
+
+
       <link name='link'>
+ 
+
+<sensor name='contact_sensor' type='contact'>
+<always_on>1</always_on>
+<update_rate>30.0</update_rate>
+<contact>
+<collision>link_collision</collision>
+<topic>__default_topic__</topic>
+</contact>
+
+<plugin name='bumper_plugin' filename='libgazebo_ros_bumper.so'>
+<bumperTopicName>contact_state</bumperTopicName>
+<!--<frameName>link</frameName>-->
+</plugin>
+</sensor>
+
         <pose frame=''>0 0 0 0 -0 0</pose>
         <inertial>
           <mass>1</mass>
@@ -141,7 +159,7 @@
         </inertial>
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
-        <visual name='visual'>
+        <visual name='link_visual'>
           <geometry>
             <sphere>
               <radius>0.5</radius>
@@ -161,7 +179,7 @@
           <cast_shadows>1</cast_shadows>
           <transparency>0</transparency>
         </visual>
-        <collision name='collision'>
+        <collision name='link_collision'>
           <laser_retro>0</laser_retro>
           <max_contacts>10</max_contacts>
           <pose frame=''>0 0 0 0 -0 0</pose>
@@ -231,7 +249,7 @@
             <izz>0.166667</izz>
           </inertia>
         </inertial>
-        <visual name='visual'>
+        <visual name='link0_visual'>
           <pose frame=''>0 0 0 0 -0 0</pose>
           <geometry>
             <box>
@@ -252,7 +270,7 @@
           <cast_shadows>1</cast_shadows>
           <transparency>0</transparency>
         </visual>
-        <collision name='collision'>
+        <collision name='link0_collision'>
           <laser_retro>0</laser_retro>
           <max_contacts>10</max_contacts>
           <pose frame=''>0 0 0 0 -0 0</pose>
@@ -324,7 +342,7 @@
             <izz>0.166667</izz>
           </inertia>
         </inertial>
-        <visual name='visual'>
+        <visual name='link1_visual'>
           <pose frame=''>0 0 0 0 -0 0</pose>
           <geometry>
             <box>
@@ -345,7 +363,7 @@
           <cast_shadows>1</cast_shadows>
           <transparency>0</transparency>
         </visual>
-        <collision name='collision'>
+        <collision name='link1_collision'>
           <laser_retro>0</laser_retro>
           <max_contacts>10</max_contacts>
           <pose frame=''>0 0 0 0 -0 0</pose>
@@ -417,7 +435,7 @@
             <izz>0.166667</izz>
           </inertia>
         </inertial>
-        <visual name='visual'>
+        <visual name='link2_visual'>
           <pose frame=''>0 0 0 0 -0 0</pose>
           <geometry>
             <box>
@@ -438,7 +456,7 @@
           <cast_shadows>1</cast_shadows>
           <transparency>0</transparency>
         </visual>
-        <collision name='collision'>
+        <collision name='link2_collision'>
           <laser_retro>0</laser_retro>
           <max_contacts>10</max_contacts>
           <pose frame=''>0 0 0 0 -0 0</pose>
@@ -500,7 +518,7 @@
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
       <pose frame=''>0 0 0.5 0 -0 0</pose>
-
+   
           <!--plugin name="model_push" filename="libmodel_push.so"/-->
           <!--plugin name="qlearn" filename="libqlearn.so"/-->    
 

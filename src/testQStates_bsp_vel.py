@@ -44,6 +44,9 @@ y3 = 3.0
 x_ob1 = 8.0
 x_ob2 = 9.0
 x_ob3 = 10.0
+v1 = 1
+v2 = 2
+v3 = 1
 setLocalVars()
 num_episodes = 0
 eps = 0.3
@@ -54,7 +57,7 @@ prevReward = 0.0
 episodes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000] #5000, 8000, 10000, 50000, 100000, 1000000]
 num_collisions = 0
 
-pkl_file = open('normal_90.pkl', 'rb')
+pkl_file = open('normal_200.pkl', 'rb')
 qStates = pickle.load(pkl_file)
 pkl_file.close()
     

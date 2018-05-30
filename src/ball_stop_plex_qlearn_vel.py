@@ -11,15 +11,18 @@ import pickle
 import time
 
 class State:
-    def __init__(self,bx,ob1,ob2,ob3):
+    def __init__(self,bx,ob1,ob2,ob3,vel1,vel2,vel3):
         self.x = bx
         self.y1 = ob1
         self.y2 = ob2
         self.y3 = ob3
+        self.v1 = vel1
+        self.v2 = vel2
+        self.v3 = vel3 
     def __hash__(self):
-        return hash((self.x, self.y1, self.y2, self.y3))
+        return hash((self.x, self.y1, self.y2, self.y3, self.v1, self.v2, self.v3))
     def __eq__(self, other):
-        return (self.x, self.y1, self.y2, self.y3) == (other.x, other.y1, other.y2, other.y3)
+        return (self.x, self.y1, self.y2, self.y3, self.v1, self.v2, self.v3) == (other.x, other.y1, other.y2, other.y3, other.v1, other.v2, other.v3)
 
 class StateAction:
     def __init__(self,state,action):
@@ -49,14 +52,12 @@ num_episodes = 0
 eps = 0.3
 current = State(bx,y1,y2,y3)
 previous = State(0.0,8.0,0.0,-8.0)
+qStates = dict()
 curReward = 0.0
 prevReward = 0.0
-episodes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000] #5000, 8000, 10000, 50000, 100000, 1000000]
-num_collisions = 0
+#episodes = [2000, 3500, 5000, 7500, 10000, 15000, 20000, 50000, 100000] #5000, 8000, 10000, 50000, 100000, 1000000]
+episodes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
 
-pkl_file = open('normal_90.pkl', 'rb')
-qStates = pickle.load(pkl_file)
-pkl_file.close()
     
     
 def sendBallPose():
@@ -81,13 +82,15 @@ def sendObsPose():
     obj_2 = LinkState('link_2',p_2,t_2,'world') 
     setLinkState(obj_2)
 
+    
 def incrementBallState():
-    global bx, num_episodes, episodes,num_collisions, x_ob3
+    global bx, num_episodes, episodes, x_ob3
     if bx == x_ob3:
         bx = 0.0
         num_episodes += 1
         if num_episodes in episodes:
-            print("Number of Collisions " + str(num_collisions) + " after episode "+ str(num_episodes))
+            print(str(num_episodes) + " completed")
+            pickleQStates(num_episodes)
     else :
         bx += 1
     sendBallPose()
@@ -108,23 +111,21 @@ def incrementObState():
         y3+=1 
     sendObsPose()
 
+
 def didCollide():
-    global current, x_ob1, x_ob2, x_ob3, num_collisions
+    global current, x_ob1, x_ob2, x_ob3
     bx = current.x
     y1 = current.y1
     y2 = current.y2
     y3 = current.y3
     if (bx == x_ob1) and (y1 == 0.0):
         #print("Collision .... Ah ")
-        num_collisions += 1
         return True
     elif (bx == x_ob2) and ( y2 == 0.0 or y2 == 1.0):
         #print("Collision .... Ah ")
-        num_collisions += 1
         return True
     elif (bx == x_ob3) and (y3 == 0.0):
         #print("Collision .... Ah ")
-        num_collisions += 1
         return True
     else :
         return False
@@ -149,9 +150,14 @@ def didReachGoal():
            
 
 
-def pickMaxAction():
+def pickAction():
     global eps, current, previous
-    return maxStateAction(current)[0]
+    import random
+    p = random.uniform(0, 1)
+    if p < eps:
+        return random.choice([True,False])
+    else:
+        return maxStateAction(current)[0]
 
 def addQValue(state):
     global qStates, x_ob1, x_ob2, x_ob3
@@ -165,17 +171,15 @@ def addQValue(state):
     if (state not in qStates) and (state.x == x_ob1 or state.x == x_ob2 or state.x == x_ob3):
         qStates[state] = dict()    
         qStates[state][True]=0.0
-        qStates[state][False] = 0.0     
+        qStates[state][False] = 0.0
+        
 
 def maxStateAction(state):
     global qStates
     addQValue(state)
-    #print("Action : True has value " + str(qStates[state][True]) + "Action : False has " + str(qStates[state][False]))
     if qStates[state][True] > qStates[state][False]:
-        #print("Chose True")
         return (True,qStates[state][True])
     else:
-        #print("Chose False")
         return (False,qStates[state][False])
 
 def act(action, prev):
@@ -203,15 +207,38 @@ def act(action, prev):
     current = State(bx,y1,y2,y3)   
     return rew
 
+def qLearnUpdate(action, reward, alpha, gamma):
+    global qStates, previous, current
+    addQValue(current)
+    addQValue(previous)
+    qStates[previous][action] += alpha*(reward + gamma*(maxStateAction(current)[1]) - qStates[previous][action] )
+    
+def pickleQStates(num):
+    global qStates
+    output = open('normal_'+str(num)+'.pkl', 'wb')
+    pickle.dump(qStates,output)
+    output.close()
+
+iterations = 0
 while not rospy.is_shutdown():
     try:
+        iterations += 1
+        #setLocalVars()
         addQValue(current)
-        action = pickMaxAction()
-        #print(action)
+        action = pickAction()
         curReward = act(action,prevReward)
         prevReward = curReward
-        if num_episodes >= max(episodes):
+        qLearnUpdate(action,curReward, 0.1,1)
+        #if iterations%2 == 0:
+        #print("Iteration "+str(iterations))
+        #print(action)
+        #print(str(bx) + " " + str(y1) + " " + str(y2) + " " + str(y3))
+        #rospy.sleep(1);
+        
+        #print(str(num_episodes) + " completed")
+        if num_episodes > max(episodes) :
             break
+                 
     except rospy.ServiceException as e:
         print e
         break
