@@ -12,7 +12,7 @@ import time
 
 class State:
     def __init__(self,bx,ob1,ob2,ob3,vel1,vel2,vel3):
-        self.x = bx
+        self.x  = bx
         self.y1 = ob1
         self.y2 = ob2
         self.y3 = ob3
@@ -47,11 +47,14 @@ y3 = 3.0
 x_ob1 = 8.0
 x_ob2 = 9.0
 x_ob3 = 10.0
+v1 = 2
+v2 = 3
+v3 = 2
 setLocalVars()
 num_episodes = 0
 eps = 0.3
-current = State(bx,y1,y2,y3)
-previous = State(0.0,8.0,0.0,-8.0)
+current = State(bx,y1,y2,y3, v1, v2, v3)
+previous = State(0.0,8.0,0.0,-8.0, 2.0, 3.0, 2.0)
 qStates = dict()
 curReward = 0.0
 prevReward = 0.0
@@ -96,35 +99,35 @@ def incrementBallState():
     sendBallPose()
 
 def incrementObState():
-    global bx, y1, y2, y3
+    global bx, y1, y2, y3, v1, v2, v3
     if y1 <= -8.0:
         y1 = 8.0
     else :
-        y1-=1   
+        y1-=v1
     if y2 >= 8.0:
         y2 = -8.0
     else :
-        y2+=2 
+        y2+=v2 
     if y3 >= 8.0:
         y3 = -8.0
     else :
-        y3+=1 
+        y3+=v3 
     sendObsPose()
 
 
 def didCollide():
-    global current, x_ob1, x_ob2, x_ob3
+    global current, x_ob1, x_ob2, x_ob3, v1, v2, v3
     bx = current.x
     y1 = current.y1
     y2 = current.y2
     y3 = current.y3
-    if (bx == x_ob1) and (y1 == 0.0):
+    if (bx == x_ob1) and (y1 >= 1-v1) and (y1 <= 0):
         #print("Collision .... Ah ")
         return True
-    elif (bx == x_ob2) and ( y2 == 0.0 or y2 == 1.0):
+    elif (bx == x_ob2) and ( y2 >= 0) and (y2 <= v2-1):
         #print("Collision .... Ah ")
         return True
-    elif (bx == x_ob3) and (y3 == 0.0):
+    elif (bx == x_ob3) and (y3 >= 0) and (y3 <= v3-1):
         #print("Collision .... Ah ")
         return True
     else :
@@ -183,7 +186,7 @@ def maxStateAction(state):
         return (False,qStates[state][False])
 
 def act(action, prev):
-    global current, previous, bx, y1, y2, y3
+    global current, previous, bx, y1, y2, y3, v1, v2, v3
     incrementObState()
     rew = 0.0
     if action:
@@ -204,7 +207,7 @@ def act(action, prev):
         else:
             rew = 0.0 
     previous = current
-    current = State(bx,y1,y2,y3)   
+    current = State(bx,y1,y2,y3,v1,v2,v3)   
     return rew
 
 def qLearnUpdate(action, reward, alpha, gamma):
@@ -215,7 +218,7 @@ def qLearnUpdate(action, reward, alpha, gamma):
     
 def pickleQStates(num):
     global qStates
-    output = open('normal_'+str(num)+'.pkl', 'wb')
+    output = open('normal_statevel_'+str(num)+'.pkl', 'wb')
     pickle.dump(qStates,output)
     output.close()
 

@@ -44,9 +44,9 @@ y3 = 3.0
 x_ob1 = 8.0
 x_ob2 = 9.0
 x_ob3 = 10.0
-v1 = 1
-v2 = 2
-v3 = 1
+v1 = 2
+v2 = 3
+v3 = 2
 setLocalVars()
 num_episodes = 0
 eps = 0.3
@@ -57,7 +57,7 @@ prevReward = 0.0
 episodes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000] #5000, 8000, 10000, 50000, 100000, 1000000]
 num_collisions = 0
 
-pkl_file = open('normal_200.pkl', 'rb')
+pkl_file = open('normal_500.pkl', 'rb')
 qStates = pickle.load(pkl_file)
 pkl_file.close()
     
@@ -96,36 +96,36 @@ def incrementBallState():
     sendBallPose()
 
 def incrementObState():
-    global bx, y1, y2, y3
+    global bx, y1, y2, y3, v1, v2, v3
     if y1 <= -8.0:
         y1 = 8.0
     else :
-        y1-=1   
+        y1-=v1
     if y2 >= 8.0:
         y2 = -8.0
     else :
-        y2+=2 
+        y2+=v2 
     if y3 >= 8.0:
         y3 = -8.0
     else :
-        y3+=1 
+        y3+=v3 
     sendObsPose()
 
 def didCollide():
-    global current, x_ob1, x_ob2, x_ob3, num_collisions
+    global current, x_ob1, x_ob2, x_ob3, num_collisions, v1, v2, v3
     bx = current.x
     y1 = current.y1
     y2 = current.y2
     y3 = current.y3
-    if (bx == x_ob1) and (y1 == 0.0):
+    if (bx == x_ob1) and (y1 >= 1-v1) and (y1 <= 0):
         #print("Collision .... Ah ")
         num_collisions += 1
         return True
-    elif (bx == x_ob2) and ( y2 == 0.0 or y2 == 1.0):
+    elif (bx == x_ob2) and ( y2 >= 0) and (y2 <= v2-1):
         #print("Collision .... Ah ")
         num_collisions += 1
         return True
-    elif (bx == x_ob3) and (y3 == 0.0):
+    elif (bx == x_ob3) and (y3 >= 0) and (y3 <= v3-1):
         #print("Collision .... Ah ")
         num_collisions += 1
         return True
