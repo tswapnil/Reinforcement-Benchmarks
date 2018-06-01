@@ -1,3 +1,4 @@
+#When state doesn't have vel and tested with just x,y1,y2,y3 learned q values
 
 normal_100
 Number of Collisions 700 after episode 100
