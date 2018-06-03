@@ -60,7 +60,7 @@ prevReward = 0.0
 episodes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000] #5000, 8000, 10000, 50000, 100000, 1000000]
 num_collisions = 0
 
-pkl_file = open('normal_statevel_200.pkl', 'rb')
+pkl_file = open('normal_statevel_10.pkl', 'rb')
 qStates = pickle.load(pkl_file)
 pkl_file.close()
     
@@ -121,15 +121,15 @@ def didCollide():
     y2 = current.y2
     y3 = current.y3
     if (bx == x_ob1) and (y1 >= 1-v1) and (y1 <= 0):
-        print("Collision .... Ah ")
+        #print("Collision .... Ah ")
         num_collisions += 1
         return True
     elif (bx == x_ob2) and ( y2 >= 0) and (y2 <= v2-1):
-        print("Collision .... Ah ")
+        #print("Collision .... Ah ")
         num_collisions += 1
         return True
     elif (bx == x_ob3) and (y3 >= 0) and (y3 <= v3-1):
-        print("Collision .... Ah ")
+        #print("Collision .... Ah ")
         num_collisions += 1
         return True
     else :
@@ -142,13 +142,13 @@ def didReachGoal():
     y2 = current.y2
     y3 = current.y3
     if (bx == x_ob1) and (y1!=0.0) :
-        print("Hurray .. Goal Reached")
+        #print("Hurray .. Goal Reached")
         return True
     elif (bx == x_ob2) and (y2!=0.0):
-        print("Hurray .. Goal Reached")
+        #print("Hurray .. Goal Reached")
         return True
     elif (bx == x_ob3) and (y3!=0.0):
-        print("Hurray .. Goal Reached")
+        #print("Hurray .. Goal Reached")
         return True
     else :
         return False
@@ -221,5 +221,5 @@ while not rospy.is_shutdown():
     except rospy.ServiceException as e:
         print e
         break
-    rospy.sleep(1)
+    #rospy.sleep(1)
 

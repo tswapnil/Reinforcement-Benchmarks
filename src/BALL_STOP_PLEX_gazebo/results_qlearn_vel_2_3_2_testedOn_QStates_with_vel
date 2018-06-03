@@ -1,5 +1,17 @@
 # State has velocity. Qstates have velocity
 
+normal_10
+Number of Collisions 249 after episode 100
+Number of Collisions 499 after episode 200
+Number of Collisions 749 after episode 300
+Number of Collisions 999 after episode 400
+Number of Collisions 1249 after episode 500
+Number of Collisions 1499 after episode 600
+Number of Collisions 1749 after episode 700
+Number of Collisions 1999 after episode 800
+Number of Collisions 2249 after episode 900
+Number of Collisions 2499 after episode 1000
+
 normal_100
 Number of Collisions 0 after episode 100
 Number of Collisions 0 after episode 200
