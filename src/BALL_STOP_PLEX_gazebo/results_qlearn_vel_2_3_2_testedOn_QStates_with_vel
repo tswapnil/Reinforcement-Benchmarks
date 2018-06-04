@@ -12,6 +12,31 @@ Number of Collisions 1999 after episode 800
 Number of Collisions 2249 after episode 900
 Number of Collisions 2499 after episode 1000
 
+normal_20
+Number of Collisions 33 after episode 100
+Number of Collisions 66 after episode 200
+Number of Collisions 99 after episode 300
+Number of Collisions 133 after episode 400
+Number of Collisions 166 after episode 500
+Number of Collisions 199 after episode 600
+Number of Collisions 233 after episode 700
+Number of Collisions 266 after episode 800
+Number of Collisions 299 after episode 900
+Number of Collisions 333 after episode 1000
+
+normal_30,40,50,60,70,80,90 
+Number of Collisions 0 after episode 100
+Number of Collisions 0 after episode 200
+Number of Collisions 0 after episode 300
+Number of Collisions 0 after episode 400
+Number of Collisions 0 after episode 500
+Number of Collisions 0 after episode 600
+Number of Collisions 0 after episode 700
+Number of Collisions 0 after episode 800
+Number of Collisions 0 after episode 900
+Number of Collisions 0 after episode 1000
+
+
 normal_100
 Number of Collisions 0 after episode 100
 Number of Collisions 0 after episode 200
