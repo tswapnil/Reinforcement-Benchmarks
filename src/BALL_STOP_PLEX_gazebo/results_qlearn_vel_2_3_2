@@ -1,4 +1,54 @@
 #When state doesn't have vel and tested with just x,y1,y2,y3 learned q values
+normal_10
+Number of Collisions 600 after episode 100
+Number of Collisions 1200 after episode 200
+
+normal_20
+Number of Collisions 700 after episode 100
+Number of Collisions 1400 after episode 200
+Number of Collisions 2100 after episode 300
+Number of Collisions 2800 after episode 400
+Number of Collisions 3500 after episode 500
+Number of Collisions 4200 after episode 600
+Number of Collisions 4900 after episode 700
+Number of Collisions 5600 after episode 800
+Number of Collisions 6300 after episode 900
+Number of Collisions 7000 after episode 1000
+
+normal_30
+Number of Collisions 699 after episode 100
+Number of Collisions 1399 after episode 200
+Number of Collisions 2099 after episode 300
+
+normal_40
+Number of Collisions 599 after episode 100
+Number of Collisions 1199 after episode 200
+Number of Collisions 1799 after episode 300
+
+normal_50
+Number of Collisions 700 after episode 100
+Number of Collisions 1400 after episode 200
+Number of Collisions 2100 after episode 300
+Number of Collisions 2800 after episode 400
+
+normal_60
+Number of Collisions 601 after episode 100
+Number of Collisions 1201 after episode 200
+Number of Collisions 1801 after episode 300
+Number of Collisions 2401 after episode 400
+
+normal_70
+Number of Collisions 600 after episode 100
+Number of Collisions 1200 after episode 200
+
+normal_80
+Number of Collisions 700 after episode 100
+Number of Collisions 1400 after episode 200
+
+normal_90
+Number of Collisions 601 after episode 100
+Number of Collisions 1201 after episode 200
+Number of Collisions 1801 after episode 300
 
 normal_100
 Number of Collisions 700 after episode 100
