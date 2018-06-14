@@ -57,10 +57,9 @@ prevReward = 0.0
 episodes = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000] #5000, 8000, 10000, 50000, 100000, 1000000]
 num_collisions = 0
 
-pkl_file = open('normal_290.pkl', 'rb')
+pkl_file = open('normal_390.pkl', 'rb')
 qStates = pickle.load(pkl_file)
 pkl_file.close()
-    
     
 def sendBallPose():
     global bx 
