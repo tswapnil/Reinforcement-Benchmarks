@@ -82,7 +82,7 @@ def sendObsPose():
     setLinkState(obj_1)
     p_2 = Pose(Point(x_ob3,y3,0.0), Quaternion(0.0,0.0,0.0,0.0))
     t_2 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
-    obj_2 = LinkState('link_2',p_2,t_2,'world') 
+    obj_2 = LinkState('link_2',p_2,t_2,'world')
     setLinkState(obj_2)
 
     
