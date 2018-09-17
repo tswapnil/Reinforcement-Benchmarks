@@ -157,6 +157,9 @@ def didReachGoal():
         return True
     else :
         return False
+
+def done():
+    return didReachGoal() or didCollide()
            
 
 
@@ -318,6 +321,20 @@ class DQNetwork:
             
             self.optimizer = tflow.train.AdamOptimizer(self.learning_rate).minimize(self.loss)
 
+class Memory():
+    def __init__(self, max_size):
+        self.buffer = deque(maxlen = max_size)
+    
+    def add(self, experience):
+        self.buffer.append(experience)
+    
+    def sample(self, batch_size):
+        buffer_size = len(self.buffer)
+        index = np.random.choice(np.arange(buffer_size),
+                                size = batch_size,
+                                replace = False)
+        
+        return [self.buffer[i] for i in index]
 
 # Reset the graph
 tflow.reset_default_graph()
@@ -337,50 +354,47 @@ for i in range(pretrain_length):
     #choice = random.randint(1,len(possible_actions))-1
     #action = possible_actions[choice]
     #next_state, reward, done, _ = env.step(action)
-    reward = act(pickRandomAction())
-    next_state = [current.x, current.y1, current.y2, current.y3]
+    action = pickRandomAction()
+    reward = act(action)
+    done_ = done()
+    #next_state = [current.x, current.y1, current.y2, current.y3]
     
     #env.render()
     
     # Stack the frames
-    next_state, stacked_frames = stack_frames(stacked_frames, next_state, False)
+    next_state, stacked_states = stack_states(stacked_states, current, False)
     
     
-    # If the episode is finished (we're dead 3x)
-    if done:
+    # If the episode is finished ()
+    if done_:
         # We finished the episode
-        next_state = np.zeros(state.shape)
+        next_state = np.zeros(next_state.shape)
         
         # Add experience to memory
-        memory.add((state, action, reward, next_state, done))
+        memory.add((state, action, reward, next_state, done_))
         
         # Start a new episode
-        state = env.reset()
-        
+        reset()
         # Stack the frames
-        state, stacked_frames = stack_frames(stacked_frames, state, True)
+        state, stacked_states = stack_states(stacked_states, current, True)
         
     else:
         # Add experience to memory
-        memory.add((state, action, reward, next_state, done))
+        memory.add((state, action, reward, next_state, done_))
         
-        # Our new state is now the next_state
-        state = next_state
+        # Our new state is now the next_state. Already set the current global. Following line is not needed anymore
+        #state = next_state
+        
 
-class Memory():
-    def __init__(self, max_size):
-        self.buffer = deque(maxlen = max_size)
-    
-    def add(self, experience):
-        self.buffer.append(experience)
-    
-    def sample(self, batch_size):
-        buffer_size = len(self.buffer)
-        index = np.random.choice(np.arange(buffer_size),
-                                size = batch_size,
-                                replace = False)
-        
-        return [self.buffer[i] for i in index]
+
+# Setup TensorBoard Writer
+writer = tflow.summary.FileWriter("/tensorboard/dqn/1")
+
+## Losses
+tflow.summary.scalar("Loss", DQN.loss)
+
+write_op = tflow.summary.merge_all()
+
 
 
 
