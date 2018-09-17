@@ -14,15 +14,18 @@ from collections import deque
 
 
 class State:
-    def __init__(self,bx,ob1,ob2,ob3):
-        self.x = bx
+    def __init__(self,bx,ob1,ob2,ob3,vel1,vel2,vel3):
+        self.x  = bx
         self.y1 = ob1
         self.y2 = ob2
         self.y3 = ob3
+        self.v1 = vel1
+        self.v2 = vel2
+        self.v3 = vel3 
     def __hash__(self):
-        return hash((self.x, self.y1, self.y2, self.y3))
+        return hash((self.x, self.y1, self.y2, self.y3, self.v1, self.v2, self.v3))
     def __eq__(self, other):
-        return (self.x, self.y1, self.y2, self.y3) == (other.x, other.y1, other.y2, other.y3)
+        return (self.x, self.y1, self.y2, self.y3, self.v1, self.v2, self.v3) == (other.x, other.y1, other.y2, other.y3, other.v1, other.v2, other.v3)
 
 class StateAction:
     def __init__(self,state,action):
@@ -35,13 +38,20 @@ class StateAction:
 
 
 bx = 0.0
-y1 = 0.0
+y1 = -3.0
 y2 = 0.0
-y3 = 0.0
+y3 = 3.0
+x_ob1 = 8.0
+x_ob2 = 9.0
+x_ob3 = 10.0
+v1 = 1
+v2 = 1
+v3 = 1
 num_episodes = 0
+episodes = [10,20,30,40,50,60,70,80,90,100]
 eps = 0.3
-current = State(bx,y1,y2,y3)
-previous = State(0.0,0.0,0.0,0.0)
+current = State(bx,y1,y2,y3, v1, v2, v3)
+previous = State(0.0,-3.0,0.0,3.0, 1.0, 1.0, 1.0)
 qStates = dict()
 curReward = 0.0
 prevReward = 0.0
@@ -56,33 +66,94 @@ def setLocalVars():
     y3 = getLinkState("link_2",'world').link_state.pose.position.y
     
     
-def sendBallPose():
-    global bx 
+def sendBallPose(bx):
     p = Pose(Point(bx,0.0,0.0), Quaternion(0.0,0.0,0.0,0.0))
     t = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
     obj = LinkState('link',p,t,'world') 
     setLinkState(obj)
 
+def sendObsPose(y1, y2, y3):
+    global x_ob1, x_ob2, x_ob3
+    p_0 = Pose(Point(x_ob1,y1,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    t_0 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
+    obj_0 = LinkState('link_0',p_0,t_0,'world') 
+    setLinkState(obj_0)
+    p_1 = Pose(Point(x_ob2,y2,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    t_1 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
+    obj_1 = LinkState('link_1',p_1,t_1,'world') 
+    setLinkState(obj_1)
+    p_2 = Pose(Point(x_ob3,y3,0.0), Quaternion(0.0,0.0,0.0,0.0))
+    t_2 = Twist(Vector3(0.0,0.0,0.0), Vector3(0.0,0.0,0.0))
+    obj_2 = LinkState('link_2',p_2,t_2,'world')
+    setLinkState(obj_2)
+
+def reset():
+    global current, previous
+    sendObsPose(-3.0, 0.0, 3.0)
+    sendBallPose(0.0)
+    previous = current
+    current = State(0.0, -3.0, 0.0, 3.0, 1.0, 1.0, 1.0)
+
 def incrementBallState():
-    global bx, num_episodes
-    if bx == 9.0:
+    global bx, num_episodes, episodes, x_ob3
+    if bx == x_ob3:
         bx = 0.0
         num_episodes += 1
+        if num_episodes in episodes:
+            print(str(num_episodes) + " completed")
+            pickleQStates(num_episodes)
     else :
         bx += 1
-    sendBallPose()
+    sendBallPose(bx)
 
+def incrementObState():
+    global bx, y1, y2, y3, v1, v2, v3
+    if y1 <= -8.0:
+        y1 = 8.0
+    else :
+        y1-=v1
+    if y2 >= 8.0:
+        y2 = -8.0
+    else :
+        y2+=v2 
+    if y3 >= 8.0:
+        y3 = -8.0
+    else :
+        y3+=v3 
+    sendObsPose(y1,y2,y3)
 
 def didCollide():
-    global bx,y1,y2,y3
-    if ((bx,0.0) == (9.0,y1)) or ((bx,0.0) == (9.0,y2)) or ((bx,0.0) == (9.0,y3)):
+    global current, x_ob1, x_ob2, x_ob3, v1, v2, v3
+    bx = current.x
+    y1 = current.y1
+    y2 = current.y2
+    y3 = current.y3
+    if (bx == x_ob1) and (y1 >= 1-v1) and (y1 <= 0):
+        #print("Collision .... Ah ")
+        return True
+    elif (bx == x_ob2) and ( y2 >= 0) and (y2 <= v2-1):
+        #print("Collision .... Ah ")
+        return True
+    elif (bx == x_ob3) and (y3 >= 0) and (y3 <= v3-1):
+        #print("Collision .... Ah ")
         return True
     else :
         return False
 
 def didReachGoal():
-    global bx,y1,y2,y3
-    if (bx == 9.0) and (y1!=0) and (y2!=0) and (y3!=0):
+    global current, x_ob1, x_ob2, x_ob3
+    bx = current.x
+    y1 = current.y1
+    y2 = current.y2
+    y3 = current.y3
+    if (bx == x_ob1) and (y1!=0.0) :
+        #print("Hurray .. Goal Reached")
+        return True
+    elif (bx == x_ob2) and (y2!=0.0):
+        #print("Hurray .. Goal Reached")
+        return True
+    elif (bx == x_ob3) and (y3!=0.0):
+        #print("Hurray .. Goal Reached")
         return True
     else :
         return False
@@ -98,14 +169,22 @@ def pickAction():
     else:
         return maxStateAction(current)[0]
 
-def addQValue(state):
-    global qStates
+def pickRandomAction():
+    global eps, current, previous
     import random
-    if (state not in qStates) and (state.x != 9) :
+    p = random.uniform(0, 1)
+    return random.choice([True,False])
+
+def addQValue(state):
+    global qStates, x_ob1, x_ob2, x_ob3
+    if state in qStates:
+        return
+    import random
+    if (state not in qStates) and (state.x != x_ob1) and (state.x != x_ob2) and (state.x != x_ob3) :
         qStates[state] = dict()
         qStates[state][True] = random.randint(-100,100)
         qStates[state][False] = random.randint(-100,100)
-    if (state not in qStates) and (state.x == 9.0):
+    if (state not in qStates) and (state.x == x_ob1 or state.x == x_ob2 or state.x == x_ob3):
         qStates[state] = dict()    
         qStates[state][True]=0.0
         qStates[state][False] = 0.0
@@ -119,34 +198,45 @@ def maxStateAction(state):
     else:
         return (False,qStates[state][False])
 
-def act(action, prev):
-    global current, previous, bx, y1, y2, y3
+def act(action):
+    global current, previous, bx, y1, y2, y3, v1, v2, v3
+    incrementObState()
+    rew = 0.0
     if action:
         incrementBallState()
-        previous = current
-        current = State(bx,y1,y2,y3)
         if didCollide():
-            return -100.0
+            rew = -10000.0
         elif didReachGoal() :
-            return 100.0
+            rew = 100.0
         else :
-            return 0.0
+            rew = 0.0
     else:
-        return prev    
+        if didCollide():
+            #incrementBallState()
+            rew = -10000.0
+        elif didReachGoal():
+            #incrementBallState()
+            rew = 100.0
+        else:
+            rew = 0.0 
+    previous = current
+    current = State(bx,y1,y2,y3,v1,v2,v3)   
+    return rew 
 
 def qLearnUpdate(action, reward, alpha, gamma):
     global qStates, previous, current
     addQValue(current)
+    addQValue(previous)
     qStates[previous][action] += alpha*(reward + gamma*(maxStateAction(current)[1]) - qStates[previous][action] )
     
 def pickleQStates(num):
     global qStates
-    output = open('data_'+str(num)+'.pkl', 'wb')
+    output = open('normal_statevel_'+str(num)+'.pkl', 'wb')
     pickle.dump(qStates,output)
     output.close()
 
 def stack_states(stacked_states, state_obj, is_new_episode):
-    global bx, y1, y2, y3, stack_size
+    global bx, y1, y2, y3, stack_size, stacked_states
     state = [state_obj.x, state_obj.y1, state_obj.y2, state_obj.y3]
     if is_new_episode:
         stacked_states = deque([np.zeros((1,4), dtype=np.float) for i in range(stack_size)],maxlen=4)
@@ -234,6 +324,48 @@ tflow.reset_default_graph()
 
 # Instantiate the DQNetwork
 DQN = DQNetwork(state_size, action_size, learning_rate)
+
+# Instantiate memory
+memory = Memory(max_size = memory_size)
+for i in range(pretrain_length):
+    # If it's the first step
+    if i == 0:
+        reset()
+        state, stacked_states = stack_states(stacked_states, current, True)
+        
+    # Get the next_state, the rewards, done by taking a random action
+    #choice = random.randint(1,len(possible_actions))-1
+    #action = possible_actions[choice]
+    #next_state, reward, done, _ = env.step(action)
+    reward = act(pickRandomAction())
+    next_state = [current.x, current.y1, current.y2, current.y3]
+    
+    #env.render()
+    
+    # Stack the frames
+    next_state, stacked_frames = stack_frames(stacked_frames, next_state, False)
+    
+    
+    # If the episode is finished (we're dead 3x)
+    if done:
+        # We finished the episode
+        next_state = np.zeros(state.shape)
+        
+        # Add experience to memory
+        memory.add((state, action, reward, next_state, done))
+        
+        # Start a new episode
+        state = env.reset()
+        
+        # Stack the frames
+        state, stacked_frames = stack_frames(stacked_frames, state, True)
+        
+    else:
+        # Add experience to memory
+        memory.add((state, action, reward, next_state, done))
+        
+        # Our new state is now the next_state
+        state = next_state
 
 class Memory():
     def __init__(self, max_size):
